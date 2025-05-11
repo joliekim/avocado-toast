@@ -141,8 +141,8 @@ class ToastScene extends Scene {
     
     // Adjust bread position to be centered in the toaster
     this.breadInToaster = true;
-    this.breadX = this.toasterX + 50; // Center bread in toaster
-    this.breadY = this.toasterY - 30;
+    this.breadX = this.toasterX + 50;
+    this.breadY = this.toasterY - 20;
     
     // Add toast button
     this.startButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "START TOASTING", () => {
@@ -200,25 +200,27 @@ class ToastScene extends Scene {
     text("Click 'Start Toasting' and stop at just the right moment.", width/2, 150);
     pop();
     
-    // Draw toaster - make it bigger and maintain aspect ratio
+    // Draw toaster
     image(assets.toaster, this.toasterX, this.toasterY, 300, 220);
     
     // Draw bread (either in toaster or popped up)
     if (this.breadInToaster) {
       // Bread in toaster, only top visible
       let breadImg = this.toastingComplete ? assets.toastedBread : assets.bread;
-      image(breadImg, this.breadX, this.breadY + 50, 180, 40);
+      // Fix bread proportions - make it wider to avoid horizontal squishing
+      image(breadImg, this.breadX, this.breadY + 30, 200, 70);
     } else {
       // Bread popped up
       let breadImg = assets.toastedBread;
-      image(breadImg, this.breadX, this.breadY - 70, 180, 120);
+      // Fix bread proportions - use a more natural width-to-height ratio
+      image(breadImg, this.breadX, this.breadY - 90, 200, 180);
     }
     
     // Update toasting progress
     if (this.toastingStarted && !this.toastingComplete) {
       this.toastingTime++;
       
-      // Auto-complete if maxed out
+      // Auto-complete if max time reached
       if (this.toastingTime >= this.maxToastingTime) {
         this.toastingComplete = true;
         this.evaluateToast();
@@ -228,7 +230,7 @@ class ToastScene extends Scene {
         this.breadInToaster = false;
         
         // Change button to continue
-        this.buttons[this.stopButtonIndex].text = "Continue to Mashing";
+        this.buttons[this.stopButtonIndex].text = "LET'S MASH";
         this.buttons[this.stopButtonIndex].callback = () => {
           gameManager.toastDone = true;
           gameManager.changeScene('mash');
@@ -297,7 +299,7 @@ class ToastScene extends Scene {
     // Perfect toast is around 60-70% of max time
     let perfectTime = this.maxToastingTime * 0.65;
     let distance = Math.abs(this.toastingTime - perfectTime);
-    let maxDistance = this.maxToastingTime * 0.65; // Maximum possible distance
+    let maxDistance = this.maxToastingTime * 0.65;
     
     // Convert to a 0-1 score (1 being perfect)
     return Math.max(0, 1 - (distance / maxDistance));
@@ -322,7 +324,7 @@ class MashScene extends Scene {
     this.avocadoY = this.bowlY - 20;
     
     // Add continue button (initially hidden)
-    this.continueButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "Continue to Toppings", () => {
+    this.continueButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "ADD TOPPINGS", () => {
       gameManager.avocadoMashed = true;
       gameManager.changeScene('toppings');
     });
@@ -447,7 +449,7 @@ class ToppingsScene extends Scene {
     this.toastY = this.plateY + 50;
     
     // Add finish button
-    this.addButton(width/2 - 100, height - 100, 200, 50, "Finish & Plate", () => {
+    this.addButton(width/2 - 100, height - 100, 200, 50, "FINISH & PLATE", () => {
       this.evaluateToppings();
       gameManager.toppingsAdded = true;
       gameManager.changeScene('results');
