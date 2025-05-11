@@ -6,8 +6,8 @@
 - **Email:** jolieheejikim@kaist.ac.kr
 
 ## Project Links
-- **Repository:** [Link to your Git repository]
-- **Video Demo:** [Link to your YouTube video]
+- **Repository:** https://github.com/joliekim/avocado-toast
+- **Video Demo:** https://youtu.be/xoB5fdas1GY
 
 ## Game Description
 
