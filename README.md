@@ -1,4 +1,4 @@
-# Mash & Munch: The Avocado Toast Game
+# 🥑 Mash & Munch 🍞: The Avocado Toast Game
 
 ## Personal Information
 - **Name:** Heeji Kim
@@ -11,7 +11,7 @@
 
 ## Game Description
 
-Mash & Munch is an interactive cooking game where players create the perfect avocado toast through a series of mini-games. The game challenges players to master each step of the avocado toast preparation process, from toasting bread to arranging toppings.
+Mash & Munch is an **interactive cooking game** where players create the perfect avocado toast through a series of mini-games. The game challenges players to master each step of the avocado toast preparation process, from toasting bread to arranging toppings.
 
 ![Game Screenshot: Landing Page](screenshots/landing_page.png)
 
@@ -28,13 +28,17 @@ The game consists of four main stages:
 
 4. **See Results**: The final creation is scored based on the quality of each step, giving players a total score out of 100.
 
-### Controls
-- **Mouse clicks** for interactions like starting/stopping toasting, mashing avocado, and selecting toppings
-- **Drag and drop** for placing and arranging toppings
+<br>
 
 ![Game Screenshot: Toast Stage](screenshots/toast_stage.png)
 ![Game Screenshot: Mash Stage](screenshots/mash_stage.png)
 ![Game Screenshot: Toppings Stage](screenshots/toppings_stage.png)
+
+
+### Controls
+- **Mouse clicks** for interactions like starting/stopping toasting, mashing avocado, and selecting toppings
+- **Drag and drop** for placing and arranging toppings
+
 
 ## Code Organization
 
