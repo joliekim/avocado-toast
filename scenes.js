@@ -8,7 +8,7 @@ class Scene {
     this.buttons.push({
       x, y, width, height, text, callback, hidden: false
     });
-    return this.buttons.length - 1; // Return button index
+    return this.buttons.length - 1;
   }
   
   drawButtons() {
@@ -164,7 +164,7 @@ class ToastScene extends Scene {
         this.breadInToaster = false;
         
         // Change button to continue
-        this.buttons[this.stopButtonIndex].text = "CONTINUE TO MASHING";
+        this.buttons[this.stopButtonIndex].text = "LET'S MASH";
         this.buttons[this.stopButtonIndex].callback = () => {
           gameManager.toastDone = true;
           gameManager.changeScene('mash');
