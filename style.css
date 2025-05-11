@@ -1,0 +1,20 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'cheese_potato', sans-serif;
+    background-color: #f5f5f5;
+  }
+  
+  canvas {
+    display: block;
+    margin: auto;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    font-family: 'good_ghost', sans-serif;
+    text-align: center;
+    color: #4a7c59;
+    margin-top: 20px;
+  }
