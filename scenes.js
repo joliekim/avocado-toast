@@ -32,7 +32,9 @@ class Scene {
     noStroke();
     textAlign(CENTER, CENTER);
     textSize(20);
-    textFont(bodyFont);
+    if (bodyFont) {
+      textFont(bodyFont);
+    }
     text(button.text, button.x + button.width/2, button.y + button.height/2);
     pop();
   }
@@ -73,7 +75,7 @@ class InstructionsScene extends Scene {
     super();
     
     // Add start game button
-    this.addButton(width/2 - 100, height - 100, 200, 50, "Start Cooking!", () => {
+    this.addButton(width/2 - 100, height - 100, 200, 50, "START COOKING!", () => {
       gameManager.changeScene('toast');
     });
   }
@@ -86,12 +88,16 @@ class InstructionsScene extends Scene {
     push();
     textAlign(CENTER);
     textSize(40);
-    textFont(headingFont);
+    if (headingFont) {
+      textFont(headingFont);
+    }
     fill(60, 100, 60);
-    text("🥑 Mash & Munch 🍞", width/2, 80);
+    text("Mash & Munch", width/2, 100);
     
     // Draw instructions
-    textFont(bodyFont);
+    if (bodyFont) {
+      textFont(bodyFont);
+    }
     textSize(24);
     fill(40);
     text("Welcome to Mash & Munch!", width/2, 150);
@@ -112,7 +118,7 @@ class InstructionsScene extends Scene {
     
     textAlign(CENTER);
     textSize(20);
-    text("Ready to make the perfect avocado toast?", width/2, height - 150);
+    text("Ready to make the perfect avocado toast?", width/2 - 120, height - 180);
     pop();
     
     // Draw buttons
@@ -128,14 +134,18 @@ class ToastScene extends Scene {
     this.toastingTime = 0;
     this.maxToastingTime = 100;
     this.toastingComplete = false;
-    this.toasterX = width/2 - 100;
-    this.toasterY = height/2 - 50;
+    
+    // toaster position
+    this.toasterX = width/2 - 150;
+    this.toasterY = height/2 + 10;
+    
+    // Adjust bread position to be centered in the toaster
     this.breadInToaster = true;
-    this.breadX = this.toasterX + 20;
-    this.breadY = this.toasterY - 20;
+    this.breadX = this.toasterX + 50; // Center bread in toaster
+    this.breadY = this.toasterY - 30;
     
     // Add toast button
-    this.startButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "Start Toasting", () => {
+    this.startButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "START TOASTING", () => {
       if (!this.toastingStarted && !this.toastingComplete) {
         this.toastingStarted = true;
         this.buttons[this.startButtonIndex].hidden = true;
@@ -144,7 +154,7 @@ class ToastScene extends Scene {
     });
     
     // Add stop toasting button (initially hidden)
-    this.stopButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "Stop Toasting", () => {
+    this.stopButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "STOP TOASTING", () => {
       if (this.toastingStarted && !this.toastingComplete) {
         this.toastingComplete = true;
         this.evaluateToast();
@@ -154,7 +164,7 @@ class ToastScene extends Scene {
         this.breadInToaster = false;
         
         // Change button to continue
-        this.buttons[this.stopButtonIndex].text = "Continue to Mashing";
+        this.buttons[this.stopButtonIndex].text = "CONTINUE TO MASHING";
         this.buttons[this.stopButtonIndex].callback = () => {
           gameManager.toastDone = true;
           gameManager.changeScene('mash');
@@ -174,30 +184,34 @@ class ToastScene extends Scene {
     push();
     textAlign(CENTER);
     textSize(30);
-    textFont(headingFont);
+    if (headingFont) {
+      textFont(headingFont);
+    }
     fill(60, 100, 60);
     text("Step 1: Toast the Bread", width/2, 80);
     
     // Draw instructions
-    textFont(bodyFont);
+    if (bodyFont) {
+      textFont(bodyFont);
+    }
     textSize(18);
     fill(40);
     text("Toast your bread to golden perfection!", width/2, 120);
     text("Click 'Start Toasting' and stop at just the right moment.", width/2, 150);
     pop();
     
-    // Draw toaster
-    image(assets.toaster, this.toasterX, this.toasterY, 200, 150);
+    // Draw toaster - make it bigger and maintain aspect ratio
+    image(assets.toaster, this.toasterX, this.toasterY, 300, 220);
     
     // Draw bread (either in toaster or popped up)
     if (this.breadInToaster) {
       // Bread in toaster, only top visible
       let breadImg = this.toastingComplete ? assets.toastedBread : assets.bread;
-      image(breadImg, this.breadX, this.breadY + 50, 160, 30);
+      image(breadImg, this.breadX, this.breadY + 50, 180, 40);
     } else {
       // Bread popped up
       let breadImg = assets.toastedBread;
-      image(breadImg, this.breadX, this.breadY - 50, 160, 120);
+      image(breadImg, this.breadX, this.breadY - 70, 180, 120);
     }
     
     // Update toasting progress
@@ -249,20 +263,20 @@ class ToastScene extends Scene {
       
       let quality = this.getToastQuality();
       let message = "";
-      let color;
+      let color = [0, 0, 0];
       
       if (quality > 0.9) {
         message = "Perfect golden toast! 😋";
-        color = (0, 150, 0);
+        color = [0, 150, 0];
       } else if (quality > 0.7) {
         message = "Pretty good toast! 👍";
-        color = (100, 150, 0);
+        color = [100, 150, 0];
       } else if (quality > 0.4) {
         message = "Acceptable toast. 🤔";
-        color = (150, 150, 0);
+        color = [150, 150, 0];
       } else {
         message = "Burnt or undercooked... 😬";
-        color = (150, 0, 0);
+        color = [150, 0, 0];
       }
       
       fill(color);
@@ -295,16 +309,17 @@ class MashScene extends Scene {
   constructor() {
     super();
     this.mashCount = 0;
-    this.maxMashCount = 30;
+    this.maxMashCount = 20;
+    this.mashEffect = 0;
     this.mashComplete = false;
-    this.mashQuality = 0;
-    this.lastMashTime = 0;
-    this.mashRhythm = [];
-    this.avocadoX = width/2 - 100;
-    this.avocadoY = height/2 - 50;
+    
+    // Bowl position
     this.bowlX = width/2 - 150;
     this.bowlY = height/2 - 100;
-    this.mashEffect = 0;
+    
+    // avocado position
+    this.avocadoX = this.bowlX + 50;
+    this.avocadoY = this.bowlY - 20;
     
     // Add continue button (initially hidden)
     this.continueButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "Continue to Toppings", () => {
@@ -312,7 +327,6 @@ class MashScene extends Scene {
       gameManager.changeScene('toppings');
     });
     
-    // Hide continue button initially
     this.buttons[this.continueButtonIndex].hidden = true;
   }
   
@@ -324,12 +338,16 @@ class MashScene extends Scene {
     push();
     textAlign(CENTER);
     textSize(30);
-    textFont(headingFont);
+    if (headingFont) {
+      textFont(headingFont);
+    }
     fill(60, 100, 60);
     text("Step 2: Mash the Avocado", width/2, 80);
     
     // Draw instructions
-    textFont(bodyFont);
+    if (bodyFont) {
+      textFont(bodyFont);
+    }
     textSize(18);
     fill(40);
     text("Mash the avocado by clicking repeatedly on it.", width/2, 120);
@@ -375,96 +393,39 @@ class MashScene extends Scene {
     rect(width/2 - 150, height - 150, 300 * progress, 20);
     pop();
     
-    // Show mashing complete message
-    if (this.mashComplete) {
-      push();
-      textAlign(CENTER);
-      textSize(24);
-      
-      let quality = this.mashQuality;
-      let message = "";
-      let color;
-      
-      if (quality > 0.9) {
-        message = "Perfect creamy consistency! 😋";
-        color = (0, 150, 0);
-      } else if (quality > 0.7) {
-        message = "Nice and smooth! 👍";
-        color = (100, 150, 0);
-      } else if (quality > 0.4) {
-        message = "A bit chunky, but usable. 🤔";
-        color = (150, 150, 0);
-      } else {
-        message = "Very inconsistent mashing... 😬";
-        color = (150, 0, 0);
-      }
-      
-      fill(color);
-      text(message, width/2, height - 180);
-      
-      // Show continue button
-      this.buttons[this.continueButtonIndex].hidden = false;
-      pop();
-    }
-    
     // Draw buttons
     super.draw();
   }
   
   mousePressed() {
-    // First check buttons
-    if (super.mousePressed()) return;
-    
     // Check if clicked on avocado
     if (!this.mashComplete &&
         mouseX > this.avocadoX && mouseX < this.avocadoX + 200 &&
         mouseY > this.avocadoY && mouseY < this.avocadoY + 150) {
       
-      // Increment mash count
       this.mashCount++;
+      this.mashEffect = 1.0;
       
       // Play squish sound
       sounds.squish.play();
       
-      // Add visual effect
-      this.mashEffect = 1.0;
-      
-      // Track rhythm
-      let currentTime = millis();
-      if (this.lastMashTime > 0) {
-        let interval = currentTime - this.lastMashTime;
-        this.mashRhythm.push(interval);
-      }
-      this.lastMashTime = currentTime;
-      
       // Check if mashing is complete
       if (this.mashCount >= this.maxMashCount) {
         this.mashComplete = true;
-        this.evaluateMashing();
+        this.evaluateMash();
+        this.buttons[this.continueButtonIndex].hidden = false;
       }
-    }
-  }
-  
-  evaluateMashing() {
-    // Calculate mashing quality based on rhythm consistency
-    if (this.mashRhythm.length < 2) {
-      this.mashQuality = 0.5; // Default if not enough data
-    } else {
-      // Calculate standard deviation of intervals
-      let sum = this.mashRhythm.reduce((a, b) => a + b, 0);
-      let mean = sum / this.mashRhythm.length;
       
-      let squaredDiffs = this.mashRhythm.map(x => Math.pow(x - mean, 2));
-      let variance = squaredDiffs.reduce((a, b) => a + b, 0) / squaredDiffs.length;
-      let stdDev = Math.sqrt(variance);
-      
-      // Lower standard deviation means more consistent rhythm
-      // Convert to a 0-1 score (1 being perfect)
-      let maxStdDev = 500; // Maximum acceptable standard deviation
-      this.mashQuality = Math.max(0, 1 - (stdDev / maxStdDev));
+      return true;
     }
     
-    gameManager.avocadoMashQuality = this.mashQuality;
+    // Check buttons
+    return super.mousePressed();
+  }
+  
+  evaluateMash() {
+    // For now, just a simple score based on number of mashes
+    gameManager.avocadoMashQuality = this.mashCount / this.maxMashCount;
   }
 }
 
@@ -501,12 +462,16 @@ class ToppingsScene extends Scene {
     push();
     textAlign(CENTER);
     textSize(30);
-    textFont(headingFont);
+    if (headingFont) {
+      textFont(headingFont);
+    }
     fill(60, 100, 60);
     text("Step 3: Add Toppings", width/2, 80);
     
     // Draw instructions
-    textFont(bodyFont);
+    if (bodyFont) {
+      textFont(bodyFont);
+    }
     textSize(18);
     fill(40);
     text("Drag and drop toppings onto your toast.", width/2, 120);
@@ -698,7 +663,9 @@ class ResultsScene extends Scene {
     push();
     textAlign(CENTER);
     textSize(40);
-    textFont(headingFont);
+    if (headingFont) {
+      textFont(headingFont);
+    }
     fill(60, 100, 60);
     text("Your Avocado Toast Creation", width/2, 80);
     
@@ -738,7 +705,7 @@ class ResultsScene extends Scene {
       fill(150, 0, 0);
     }
     
-    text(message, width/2, height - 150);
+    text(message, width/2, height - 180);
     pop();
     
     // Draw buttons

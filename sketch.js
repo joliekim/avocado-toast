@@ -6,8 +6,8 @@ let sounds = {};
 let gameState = "landing"; // Start with landing page state
 
 // Font variables
-let bodyFont;
-let headingFont;
+let headingFont; // For headings
+let bodyFont;    // For body text
 
 // Landing page variables
 let bgStart;
@@ -15,9 +15,28 @@ let btnStart;
 
 // Preload assets
 function preload() {
-  // Load fonts
-  bodyFont = loadFont('assets/cheese_potato.otf');
-  headingFont = loadFont('assets/good_ghost.otf');
+  // Load fonts with error handling
+  loadFont('assets/crayon_crumble.ttf', 
+    font => {
+      headingFont = font;
+      console.log("Heading font loaded successfully");
+    },
+    error => {
+      console.error("Failed to load heading font:", error);
+      headingFont = null;
+    }
+  );
+  
+  loadFont('assets/harley_smith.otf', 
+    font => {
+      bodyFont = font;
+      console.log("Body font loaded successfully");
+    },
+    error => {
+      console.error("Failed to load body font:", error);
+      bodyFont = null;
+    }
+  );
   
   // Load landing page assets
   bgStart = loadImage('assets/startscreen_bg.png');
@@ -52,10 +71,32 @@ function preload() {
 // Setup the game
 function setup() {
   createCanvas(800, 600);
+  
+  // Check if font files exist
+  fetch('assets/crayon_crumble.ttf')
+    .then(response => {
+      if (response.ok) {
+        console.log("crayon_crumble.ttf file exists!");
+      } else {
+        console.error("crayon_crumble.ttf file not found!");
+      }
+    });
+  
+  fetch('assets/harley_smith.otf')
+    .then(response => {
+      if (response.ok) {
+        console.log("harley_smith.otf file exists!");
+      } else {
+        console.error("harley_smith.otf file not found!");
+      }
+    });
+  
   gameManager = new GameManager();
   
-  // Set default text font
-  textFont(bodyFont);
+  // Set default text font if loaded
+  if (bodyFont) {
+    textFont(bodyFont);
+  }
   
   // Initialize game but don't start yet - wait for start button click
   // The actual scene will be created when the start button is clicked
@@ -78,23 +119,8 @@ function draw() {
 
 // Draw the landing page
 function drawLandingPage() {
-  image(bgStart, 0, 0, width, height); // Draw background
+  image(bgStart, 0, 0, width, height);
   drawStartButton();
-  
-  // Add title with heading font
-  push();
-  textFont(headingFont);
-  textSize(50);
-  textAlign(CENTER);
-  fill(60, 100, 60);
-  text("Mash & Munch", width/2, 150);
-  
-  // Add subtitle with body font
-  textFont(bodyFont);
-  textSize(24);
-  fill(80, 50, 20);
-  text("Create the perfect avocado toast!", width/2, 200);
-  pop();
 }
 
 // Draw the start button
