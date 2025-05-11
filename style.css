@@ -18,3 +18,22 @@ html, body {
     color: #4a7c59;
     margin-top: 20px;
   }
+
+  /* Add styling for the home button */
+  .home-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #f5a9a9;
+    border: 2px solid #d56a6a;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: 'harley_smith', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .home-button:hover {
+    background-color: #f78989;
+  }

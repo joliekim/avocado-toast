@@ -139,7 +139,7 @@ class ToastScene extends Scene {
     this.toasterX = width/2 - 150;
     this.toasterY = height/2;
     
-    // Adjust bread position to be centered in the toaster
+    // Adjust bread position
     this.breadInToaster = true;
     this.breadX = this.toasterX + 50;
     this.breadY = this.toasterY - 20;
