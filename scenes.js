@@ -137,7 +137,7 @@ class ToastScene extends Scene {
     
     // toaster position
     this.toasterX = width/2 - 150;
-    this.toasterY = height/2 + 10;
+    this.toasterY = height/2;
     
     // Adjust bread position to be centered in the toaster
     this.breadInToaster = true;
@@ -314,17 +314,15 @@ class MashScene extends Scene {
     this.maxMashCount = 20;
     this.mashEffect = 0;
     this.mashComplete = false;
+    this.mashQuality = 0;
     
-    // Bowl position
     this.bowlX = width/2 - 150;
-    this.bowlY = height/2 - 100;
-    
-    // avocado position
+    this.bowlY = height/2 - 10;
     this.avocadoX = this.bowlX + 50;
     this.avocadoY = this.bowlY - 20;
     
     // Add continue button (initially hidden)
-    this.continueButtonIndex = this.addButton(width/2 - 100, height - 100, 200, 50, "ADD TOPPINGS", () => {
+    this.continueButtonIndex = this.addButton(width/2 - 100, height - 80, 200, 50, "ADD TOPPINGS", () => {
       gameManager.avocadoMashed = true;
       gameManager.changeScene('toppings');
     });
@@ -387,13 +385,40 @@ class MashScene extends Scene {
     // Draw mashing progress bar
     push();
     fill(200, 200, 200);
-    rect(width/2 - 150, height - 150, 300, 20);
+    rect(width/2 - 150, height - 120, 300, 20);
     
     // Progress
     let progress = this.mashCount / this.maxMashCount;
     fill(142, 170, 96); // Avocado green
-    rect(width/2 - 150, height - 150, 300 * progress, 20);
+    rect(width/2 - 150, height - 120, 300 * progress, 20);
     pop();
+    
+    // Display evaluation message when mashing is complete
+    if (this.mashComplete) {
+      push();
+      textAlign(CENTER);
+      textSize(24);
+      
+      // Display different messages based on mash quality
+      let message = "";
+      
+      if (this.mashQuality > 0.9) {
+        message = "Perfect creamy consistency!";
+        fill(0, 150, 0);
+      } else if (this.mashQuality > 0.7) {
+        message = "Nice and smooth!";
+        fill(100, 150, 0);
+      } else if (this.mashQuality > 0.4) {
+        message = "A bit chunky, but usable.";
+        fill(150, 150, 0);
+      } else {
+        message = "Very inconsistent mashing...";
+        fill(150, 0, 0);
+      }
+      
+      text(message, width/2, height - 130);
+      pop();
+    }
     
     // Draw buttons
     super.draw();
@@ -426,8 +451,10 @@ class MashScene extends Scene {
   }
   
   evaluateMash() {
-    // For now, just a simple score based on number of mashes
-    gameManager.avocadoMashQuality = this.mashCount / this.maxMashCount;
+    this.mashQuality = this.mashCount / this.maxMashCount;
+    
+    // Store the quality in the game manager
+    gameManager.avocadoMashQuality = this.mashQuality;
   }
 }
 
@@ -438,8 +465,8 @@ class ToppingsScene extends Scene {
     this.toppings = [];
     this.availableToppings = [
       { name: 'egg', img: 'egg', width: 80, height: 60 },
-      { name: 'chili', img: 'chili', width: 40, height: 20 },
-      { name: 'tomato', img: 'tomato', width: 50, height: 50 }
+      { name: 'chili', img: 'chili', width: 60, height: 60 },
+      { name: 'tomato', img: 'tomato', width: 60, height: 60 }
     ];
     this.selectedTopping = null;
     this.draggedTopping = null;
@@ -518,17 +545,18 @@ class ToppingsScene extends Scene {
   
   drawToppingOptions() {
     push();
+    // Draw the panel background
     fill(255, 240);
-    rect(50, height - 200, width - 100, 80, 10);
+    rect(50, height - 200, width - 100, 80, 12);
     
-    textAlign(CENTER);
-    textSize(16);
+    textAlign(LEFT);
+    textSize(18);
     fill(80);
-    text("Available Toppings - Click to select", width/2, height - 180);
+    text("Available Toppings - Click to select", 80, height - 160);
     
-    // Draw topping icons
-    let startX = 100;
-    let iconY = height - 150;
+    // Draw topping icons on the right side
+    let startX = width - 350;
+    let iconY = height - 160;
     let spacing = 100;
     
     for (let i = 0; i < this.availableToppings.length; i++) {
@@ -538,7 +566,7 @@ class ToppingsScene extends Scene {
       image(
         assets[topping.img], 
         x, 
-        iconY, 
+        iconY - topping.height/2, 
         topping.width, 
         topping.height
       );
@@ -548,7 +576,7 @@ class ToppingsScene extends Scene {
         noFill();
         stroke(255, 100, 100);
         strokeWeight(3);
-        rect(x - 5, iconY - 5, topping.width + 10, topping.height + 10);
+        rect(x - 5, iconY - topping.height/2 - 5, topping.width + 10, topping.height + 10);
       }
     }
     pop();
@@ -558,9 +586,9 @@ class ToppingsScene extends Scene {
     // First check buttons
     if (super.mousePressed()) return;
     
-    // Check if clicked on a topping option
-    let startX = 100;
-    let iconY = height - 150;
+    // Check if clicked on a topping option - updated positions
+    let startX = width - 350;
+    let iconY = height - 160;
     let spacing = 100;
     
     for (let i = 0; i < this.availableToppings.length; i++) {
@@ -568,7 +596,7 @@ class ToppingsScene extends Scene {
       let x = startX + i * spacing;
       
       if (mouseX > x && mouseX < x + topping.width &&
-          mouseY > iconY && mouseY < iconY + topping.height) {
+          mouseY > iconY - topping.height/2 && mouseY < iconY + topping.height/2) {
         this.selectedTopping = i;
         
         // Create a new topping to drag
@@ -649,11 +677,17 @@ class ResultsScene extends Scene {
     super();
     
     // Calculate final score
-    this.finalScore = gameManager.calculateScore();
+    this.finalScore = (
+      gameManager.toastBrownness * 100 + 
+      gameManager.avocadoMashQuality * 100 + 
+      gameManager.toppingsArrangement * 100
+    ) / 3;
     
     // Add play again button
-    this.addButton(width/2 - 100, height - 100, 200, 50, "Play Again", () => {
+    this.addButton(width/2 - 100, height - 100, 200, 50, "PLAY AGAIN", () => {
+      // Reset game state
       gameManager.resetGame();
+      gameManager.changeScene('instructions');
     });
   }
   
@@ -664,7 +698,7 @@ class ResultsScene extends Scene {
     // Draw title
     push();
     textAlign(CENTER);
-    textSize(40);
+    textSize(50);
     if (headingFont) {
       textFont(headingFont);
     }
@@ -672,42 +706,42 @@ class ResultsScene extends Scene {
     text("Your Avocado Toast Creation", width/2, 80);
     
     // Draw final score
-    textSize(60);
+    textSize(70); 
     fill(40);
     text(Math.round(this.finalScore) + "/100", width/2, 180);
     
     // Draw score breakdown
-    textSize(20);
+    textSize(28);
     textAlign(LEFT);
     let scoreY = 250;
-    let scoreX = width/2 - 150;
+    let scoreX = width/2 - 200;
     
     text("Toast Quality: " + Math.round(gameManager.toastBrownness * 100) + "%", scoreX, scoreY);
-    scoreY += 40;
+    scoreY += 50;
     text("Avocado Mash: " + Math.round(gameManager.avocadoMashQuality * 100) + "%", scoreX, scoreY);
-    scoreY += 40;
+    scoreY += 50;
     text("Topping Arrangement: " + Math.round(gameManager.toppingsArrangement * 100) + "%", scoreX, scoreY);
     
-    // Draw feedback message
+    // Draw feedback message with larger font
     textAlign(CENTER);
-    textSize(24);
+    textSize(32); // Increased from 24
     let message = "";
     
     if (this.finalScore > 90) {
-      message = "Masterpiece! Your avocado toast is perfect! 😋";
+      message = "Masterpiece! Your avocado toast is perfect!";
       fill(0, 150, 0);
     } else if (this.finalScore > 70) {
-      message = "Delicious! A very tasty creation! 👍";
+      message = "Delicious! A very tasty creation!";
       fill(100, 150, 0);
     } else if (this.finalScore > 50) {
-      message = "Not bad! Your toast is pretty good. 🤔";
+      message = "Not bad! Your toast is pretty good.";
       fill(150, 150, 0);
     } else {
-      message = "Keep practicing! Your toast needs work... 😬";
+      message = "Keep practicing! Your toast needs work...";
       fill(150, 0, 0);
     }
     
-    text(message, width/2, height - 180);
+    text(message, width/2 - 30, height - 180);
     pop();
     
     // Draw buttons
